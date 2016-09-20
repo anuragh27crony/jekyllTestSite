@@ -1,0 +1,84 @@
+<html>
+<head>
+<script type="text/javascript" src="resources/js/GitHub.bundle.min.js"></script>
+<script type="text/javascript" src="resources/js/utils.js"></script>
+</head>
+
+<script>
+	var auth_code = location.search.split('code=')[1] ? location.search
+			.split('code=')[1] : null;
+
+	//console.log('access code is' + location.search.split('code=')[1])
+	var failed_axis_label = [];
+	var passed_axis_label = [];
+
+	failed_axis_label.push('Matrox 2008 Standard');
+	failed_axis_label.push('Matrox 2008 Web');
+	failed_axis_label.push('Osprey 2008 Standard');
+	failed_axis_label.push('Osprey 2008 Web');
+	failed_axis_label.push('Osprey 2012 Standard');
+
+	passed_axis_label.push('Matrox 2008 Standard');
+	passed_axis_label.push('Matrox 2008 Web');
+	passed_axis_label.push('Osprey 2008 Standard');
+	passed_axis_label.push('Osprey 2008 Web');
+	passed_axis_label.push('Osprey 2012 Standard');
+
+	console.log(failed_axis_label);
+	console.log(passed_axis_label);
+
+	if (auth_code != null) {
+
+		var auth_token = fetch_git_auth_token(client_id, client_secret,
+				auth_code);
+
+		console.log("outside");
+
+		var line_labels = [];
+
+		var build_legend = get_build_name();
+		var build_data = get_build_content_data();
+
+		console.log(Object.prototype.toString.call(build_legend));
+		console.log(Object.prototype.toString.call(build_data));
+
+		console.log(build_content);
+		console.log(build_name);
+
+		var draw_failed_build_data = [];
+		var draw_passed_build_data = []
+
+		var index = 0;
+
+		for (item in build_legend) {
+			draw_failed_build_data.push(new Array(failed_axis_label.length)
+					.fill(0));
+			draw_passed_build_data.push(new Array(passed_axis_label.length)
+					.fill(0));
+		}
+
+		var j = 0;
+		var i = 0;
+		var fail_index = 0, passed_index = 0;
+
+		console.log(build_data.length);
+
+		for (i in build_data) {
+			line_labels.push(build_legend[i]);
+			for (j in build_data[i]) {
+				fail_index = failed_axis_label.indexOf(build_data[i][j].env);
+				passed_index = passed_axis_label.indexOf(build_data[i][j].env);
+				console.log(fail_index);
+				console.log(passed_index);
+				draw_failed_build_data[i][fail_index] = build_data[i][j].aggr.fail;
+				draw_passed_build_data[i][passed_index] = build_data[i][j].aggr.pass;
+			}
+		}
+
+		console.log(line_labels);
+		console.log(draw_failed_build_data);
+		console.log(draw_passed_build_data);
+
+	}
+</script>
+</html>
