@@ -1,0 +1,94 @@
+--- ---
+<html>
+<head>
+<script src="GitHub.bundle.min.js"></script>
+</head>
+<script>
+	// Create the XHR object.
+	function createCORSRequest(method, url) {
+		var xhr = new XMLHttpRequest();
+		if ("withCredentials" in xhr) {
+			// XHR for Chrome/Firefox/Opera/Safari.
+			xhr.open(method, url, true);
+		} else if (typeof XDomainRequest != "undefined") {
+			// XDomainRequest for IE.
+			xhr = new XDomainRequest();
+			xhr.open(method, url);
+		} else {
+			// CORS not supported.
+			xhr = null;
+		}
+		return xhr;
+	}
+
+	params = new URLSearchParams(location.search.slice(1));
+	access_code = params.get('code');
+	console.log("CodeReturned:" + access_code);
+
+	var url = 'https://github.com/login/oauth/access_token?client_id=&client_secret=&code='
+			+ access_code;
+	var xhr = createCORSRequest('POST', url);
+	xhr.setRequestHeader("Accept", "application/json");
+	xhr.send();
+
+	console.log(xhr);
+
+	xhr.onload = function() {
+		var text = xhr.responseText;
+		if (xhr.status == 200) {
+			var response = xhr.responseText
+			console.log(xhr.responseText);
+			var responseJson = JSON.parse(xhr.responseText);
+			if (responseJson.error != null || typeof responseJson == undefined) {
+				if (responseJson.error != null) {
+					alert(responseJson.error_description);
+				}
+			} else {
+
+				console.log(responseJson.access_token);
+				var gh = new GitHub({
+					token : responseJson.access_token
+				});
+
+				// const me = gh.getUser('AnuragMala');
+				// var repos=me.listRepos();
+				// repos.then(function({data:reposJson}){
+				// for (repo in reposJson){
+				// console.log(reposJson[repo].name)
+				// console.log(reposJson[repo])
+				// }
+				// });
+
+				const
+				me = gh.getRepo('AnuragMala', 'TestReportRepo');
+				const
+				repos = me.getContents(null, 'latestfolder', true,
+						fetch_contents);
+				console.log(me);
+
+				function fetch_contents(error, result, request) {
+					console.log(result);
+					console.log(request);
+					for (file in result) {
+						console.log(result[file].name)
+						console.log(result[file].download_url)
+					}
+				}
+
+				const
+				org = gh.getOrganization('Teletrax');
+				org.getRepos(fetch_repo);
+
+				function fetch_repo(error, result, request) {
+					console.log(request);
+					console.log(result);
+				}
+
+			}
+		}
+	}
+	xhr.onerror = function() {
+		alert(xhr.responseText);
+	};
+</script>
+</html>

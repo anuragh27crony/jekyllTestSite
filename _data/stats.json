@@ -1,0 +1,24 @@
+{
+    "total":[
+    {
+        "Name":  "Start Application",
+        "pass":  1,
+        "fail":  0
+    },
+ {
+        "Name":  "Start and Stop Channels",
+        "pass":  5,
+        "fail":  0
+    },
+ {
+        "Name":  "Enable and Disable Features",
+        "pass":  12,
+        "fail":  2
+    },
+{
+        "Name":  "Stop Application",
+        "pass":  1,
+        "fail":  0
+    }
+]
+}

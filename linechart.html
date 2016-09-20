@@ -1,0 +1,74 @@
+	---
+	title: sample post
+	author: dave
+	---
+	<html>
+<link href="css/linechart.css" rel="stylesheet">
+<script src="Chart.js"></script>
+<div class="linechart_container">
+<canvas id="myChart"></canvas>
+</div>
+<script>
+
+var env_labels=[]
+var is_legend_defined=false
+
+if(!Boolean(is_legend_defined)){
+    //define environment labels here
+}
+
+var axis_label=["January", "February", "March", "April", "May", "June", "July"];
+var data=new Array(5);
+var index=0;
+for (index=0;index<data.length;index++){
+    data[index]=new Array(axis_label.length).fill(0);
+}
+
+data[0]=[65, 59, 80, 81, 56, 55, 40];
+data[1]=[59, 80, 81, 56, 55, 40,80];
+data[2]=[0, 0, 0, 51, 65, 70,90];
+
+
+
+
+var data_sets=[];
+
+for (index=0;index<data.length;index++){
+    var sample_data_set={
+            label: "My First dataset",
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: "rgba(75,192,192,1)",
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: "rgba(75,192,192,1)",
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data: data[index],
+            spanGaps: false,
+        };
+    data_sets.push(sample_data_set);
+}
+
+    var data = {
+    labels: axis_label,
+    datasets:data_sets
+};
+	var options={}
+    var ctx = document.getElementById("myChart");
+    var myLineChart = new Chart(ctx, {
+    type: 'line',
+    data: data,
+    options: options
+});
+</script>
+</html>

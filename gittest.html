@@ -1,0 +1,31 @@
+---
+---
+<html>
+	<head>
+		<!-- <script src="require.js"></script> -->
+		<script src="GitHub.bundle.min.js"></script>
+	</head>
+	<script >
+				console.log("Before Loading");
+		// var GitHub = require('github-api');
+		let params = new URLSearchParams(location.search.slice(1));
+		console.log(params.get('code'))
+		// console.log(params.get('code'))
+		console.log("After loading")
+		// token auth
+		var gh = new GitHub({
+		// username : 'anuragh27crony',
+		// password : 'Amullu124!@$'
+		token:params.get('code')
+		});
+		console.log("new Github instance created")
+		const me = gh.getUser();
+		console.log("Fetching Users")
+
+		const user = gh.getUser('AnuragMala');
+		user.listRepos()
+		.then(function({data: reposJson}) {
+		console.log(`AnuragMala has ${reposJson.length} repos!`);
+		});
+	</script>
+</html>

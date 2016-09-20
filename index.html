@@ -1,0 +1,22 @@
+---
+---
+<script>
+var testrun_stats=[]
+{% for dirs in site.data.date %}
+	dir='{{ dirs }}'
+	testrun_stats.push(dir.split('{')[0])
+{% endfor %}
+
+testrun_stats.sort()
+
+text=''
+var no_runs=5
+for (i = testrun_stats.length-1; i > testrun_stats.length-no_runs-1; i--) { 
+    text += testrun_stats[i] + "<br/>";
+}
+document.write(text)
+</script>
+
+
+<h2> Testing</h2>
+<label>text</label>
