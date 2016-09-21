@@ -1,6 +1,8 @@
-var build_name = [];
-var build_history_path = [];
-var build_content = []
+var build_name=[] ;
+var build_history_path= [];
+var build_content= [];
+var no_of_builds=0;
+
 
 function get_build_content_data(){
 	return build_content;
@@ -8,6 +10,10 @@ function get_build_content_data(){
 
 function get_build_name(){
 	return build_name;
+}
+
+function set_no_last_builds(no_last_builds) {
+	no_of_builds=no_last_builds;
 }
 
 function createCORSRequest(method, url) {
@@ -62,17 +68,13 @@ function fetch_git_auth_token(client_id, client_secret, auth_code) {
 				var history = reportsRepo.getContents('master',
 						'PCD/stats/history', true,
 						history_dir_contents_callback);
-				//console.log(build_history_path);
 				history.then(function() {
 					for (index in build_name) {
 						var buildData = reportsRepo.getContents('master',
 								build_history_path[index], true,
 								build_contents_callback);
-						buildData.then(function() {
-							//console.log("Build is " + build_name[index]);
-							//console.log(build_content);
-						});
 					}
+
 				});
 			}
 		}
@@ -83,8 +85,7 @@ function history_dir_contents_callback(error, result, request) {
 	if (error == null && request.status == 200) {
 		var len = result.length;
 		var index = 0;
-		var max = 3;
-		for (index = len - 1; index > len - 1 - max; index--) {
+		for (index = len - 1; index > len - 1 - no_of_builds; index--) {
 			build_name.push(result[index].name)
 			build_history_path.push(result[index].path)
 
@@ -99,9 +100,9 @@ function build_contents_callback(error, result, request) {
 	if (error == null && request.status == 200) {
 		var len = result.length;
 		var index = 0;
-		var data = []
+		var data = [];
 
-		var requests = [];
+		var requests =[];
 		for (i = 0; i < result.length; i++) {
 			 (function (i){
 				 requests[i] =createCORSRequest('GET', result[i].download_url);
@@ -115,10 +116,63 @@ function build_contents_callback(error, result, request) {
 	            })(i);
 		}
 		build_content.push(data);
-
-
+		if(build_content.length == build_name.length){
+			draw_history_graph();
+		}
 	} else {
 		console.log(error);
 		console.log(request);
 	}
+}
+
+
+function draw_history_graph(){
+	var failed_axis_label = [];
+	var passed_axis_label  = [];
+
+	// Matrox 2008 Standard
+	// Matrox 2008 Web
+	// Osprey 2008 Standard
+	// Osprey 2008 Web
+	// Osprey 2012 Standard
+
+	failed_axis_label.push('Matrox 2008 Standard');
+	failed_axis_label.push('Matrox 2008 Web');
+	failed_axis_label.push('Osprey 2008 Standard');
+	failed_axis_label.push('Osprey 2008 Web');
+	failed_axis_label.push('Osprey 2012 Standard');
+
+
+	var line_label=build_name;
+	var line_data= [];
+	var len=failed_axis_label.length;
+	
+	console.log(build_content);
+
+	for (build in build_content){
+		line_data[build]= [len].fill(0);
+		var build_data=build_content[build];
+		for(item in failed_axis_label){
+			var search_text=failed_axis_label[item]
+			var index= search_json_array(build_data,search_text);
+			if(index != -1){
+				line_data[build][index]=build_data[index].aggr.pass;
+			}
+		}
+	}
+	console.log(line_data);
+	console.log(line_label);
+}
+
+function search_json_array(json_array,search_text){
+	var index=-1;
+	var array_data=json_array;
+	console.log("Search Text is >> "+search_text);
+	for (item in array_data){
+		if(array_data[item].env == search_text){
+			index = item;
+			break;
+		}
+	}
+return index;
 }
